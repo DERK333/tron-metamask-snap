@@ -1,6 +1,7 @@
 import { panel, heading, text, divider, copyable } from '@metamask/snaps-ui';
 import { TronService } from './tron';
 import { TronAccount } from './types';
+import { tronDatabase, DatabaseUser, DatabaseSession } from './database';
 
 export interface DAppSession {
   connected: boolean;
@@ -27,10 +28,23 @@ export class TronDAppConnector {
   private tronService: TronService;
   private activeSessions: Map<string, DAppSession> = new Map();
   private globalTronObject: any = null;
+  private currentUser: DatabaseUser | null = null;
 
   constructor(tronService: TronService) {
     this.tronService = tronService;
     this.initializeGlobalTronObject();
+    this.initializeDatabase();
+  }
+
+  /**
+   * Initialize database connection
+   */
+  private async initializeDatabase(): Promise<void> {
+    try {
+      await tronDatabase.initialize();
+    } catch (error) {
+      console.warn('Database initialization failed, using snap state only:', error);
+    }
   }
 
   /**
@@ -84,7 +98,19 @@ export class TronDAppConnector {
       // Get current TRON account
       const account = await this.tronService.getAccount();
       
-      // Create session
+      // Ensure user exists in database
+      await this.ensureUserExists(account.address, account.network);
+      
+      // Create database session
+      const dbSession = await tronDatabase.storeDAppSession(
+        this.currentUser!.id,
+        request.origin,
+        request.name,
+        request.icon,
+        account.network === 'mainnet' ? 728126428 : 2494104990
+      );
+      
+      // Create session for in-memory tracking
       const session: DAppSession = {
         connected: true,
         origin: request.origin,
@@ -95,7 +121,7 @@ export class TronDAppConnector {
         connectedAt: Date.now(),
       };
 
-      // Store session
+      // Store session in memory
       this.activeSessions.set(request.origin, session);
       
       // Update global tron object
@@ -106,6 +132,19 @@ export class TronDAppConnector {
       return session;
     } catch (error) {
       throw new Error(`Failed to connect dApp: ${(error as any)?.message || 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Ensure user exists in database
+   */
+  private async ensureUserExists(address: string, network: string): Promise<void> {
+    if (!this.currentUser) {
+      this.currentUser = await tronDatabase.getUser(address);
+      
+      if (!this.currentUser) {
+        this.currentUser = await tronDatabase.storeUser(address, network);
+      }
     }
   }
 

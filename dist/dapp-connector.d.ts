@@ -22,7 +22,12 @@ export declare class TronDAppConnector {
     private tronService;
     private activeSessions;
     private globalTronObject;
+    private currentUser;
     constructor(tronService: TronService);
+    /**
+     * Initialize database connection
+     */
+    private initializeDatabase;
     /**
      * Initialize global tron object for dApp compatibility
      * This mimics TronLink's window.tron object
@@ -32,6 +37,10 @@ export declare class TronDAppConnector {
      * Handle dApp connection request
      */
     connectDApp(request: DAppConnectionRequest): Promise<DAppSession>;
+    /**
+     * Ensure user exists in database
+     */
+    private ensureUserExists;
     /**
      * Handle incoming dApp requests
      */
