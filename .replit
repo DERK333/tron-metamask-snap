@@ -19,6 +19,14 @@ args = "HTTP Server"
 task = "workflow.run"
 args = "TRON Snap Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start"
+
 [[workflows.workflow]]
 name = "HTTP Server"
 author = "agent"
@@ -35,6 +43,23 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx webpack --mode production && node server.js"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Build"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx webpack --mode production"
+
+[[workflows.workflow]]
+name = "Start"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
 waitForPort = 5000
 
 [[ports]]
