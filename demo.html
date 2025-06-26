@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRON Snap dApp Connection Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #b71c1c;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .output {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.connected {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        .status.disconnected {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 TRON Snap dApp Connection Demo</h1>
+        
+        <div class="section">
+            <h3>Connection Status</h3>
+            <div id="status" class="status disconnected">
+                Not connected to TRON Snap
+            </div>
+            <button onclick="connectToTronSnap()">Connect to TRON Snap</button>
+            <button onclick="disconnectFromSnap()" disabled id="disconnectBtn">Disconnect</button>
+        </div>
+
+        <div class="section">
+            <h3>Account Information</h3>
+            <button onclick="getAccount()" disabled id="getAccountBtn">Get Account</button>
+            <button onclick="getBalance()" disabled id="getBalanceBtn">Get Balance</button>
+            <div id="accountOutput" class="output">Connect to view account information</div>
+        </div>
+
+        <div class="section">
+            <h3>Send Transaction</h3>
+            <div class="input-group">
+                <label for="toAddress">To Address:</label>
+                <input type="text" id="toAddress" placeholder="TRON address (e.g., TRX...)" />
+            </div>
+            <div class="input-group">
+                <label for="amount">Amount (TRX):</label>
+                <input type="number" id="amount" placeholder="1.0" step="0.000001" />
+            </div>
+            <button onclick="sendTransaction()" disabled id="sendTxBtn">Send Transaction</button>
+            <div id="txOutput" class="output">Transaction results will appear here</div>
+        </div>
+
+        <div class="section">
+            <h3>Sign Message</h3>
+            <div class="input-group">
+                <label for="message">Message to Sign:</label>
+                <textarea id="message" rows="3" placeholder="Enter message to sign..."></textarea>
+            </div>
+            <button onclick="signMessage()" disabled id="signMsgBtn">Sign Message</button>
+            <div id="signOutput" class="output">Signature will appear here</div>
+        </div>
+
+        <div class="section">
+            <h3>Network Operations</h3>
+            <button onclick="switchToTestnet()" disabled id="testnetBtn">Switch to Testnet</button>
+            <button onclick="switchToMainnet()" disabled id="mainnetBtn">Switch to Mainnet</button>
+            <button onclick="getTransactionHistory()" disabled id="historyBtn">Get Transaction History</button>
+            <div id="networkOutput" class="output">Network operation results will appear here</div>
+        </div>
+
+        <div class="section">
+            <h3>dApp Session Management</h3>
+            <button onclick="viewActiveSessions()" disabled id="sessionsBtn">View Active Sessions</button>
+            <button onclick="disconnectDApp()" disabled id="disconnectDAppBtn">Disconnect This dApp</button>
+            <div id="sessionOutput" class="output">Session information will appear here</div>
+        </div>
+    </div>
+
+    <script>
+        let isConnected = false;
+
+        // Check if MetaMask Flask is available
+        if (typeof window.ethereum === 'undefined') {
+            document.querySelector('.container').innerHTML = 
+                '<h1>❌ MetaMask Flask Required</h1><p>Please install MetaMask Flask to use this dApp with TRON Snap.</p>';
+        }
+
+        async function connectToTronSnap() {
+            try {
+                updateOutput('status', 'Connecting to TRON Snap...');
+                
+                // Connect to the TRON snap
+                await window.ethereum.request({
+                    method: 'wallet_requestSnaps',
+                    params: {
+                        'npm:tron-snap': {}
+                    }
+                });
+
+                // Test connection by getting account
+                const account = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_connect'
+                        }
+                    }
+                });
+
+                // Connect as dApp
+                const dAppConnection = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_dapp_connect',
+                            params: {
+                                origin: window.location.origin,
+                                name: 'TRON Snap Demo dApp',
+                                icon: 'https://tron.network/favicon.ico'
+                            }
+                        }
+                    }
+                });
+
+                isConnected = true;
+                updateConnectionUI();
+                updateOutput('status', `Connected to TRON Snap!\nAccount: ${account.address}\nNetwork: ${account.network}`);
+                updateOutput('accountOutput', JSON.stringify(account, null, 2));
+                
+            } catch (error) {
+                console.error('Connection failed:', error);
+                updateOutput('status', `Connection failed: ${error.message}`);
+            }
+        }
+
+        async function getAccount() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_getAccount'
+                        }
+                    }
+                });
+                updateOutput('accountOutput', JSON.stringify(result, null, 2));
+            } catch (error) {
+                updateOutput('accountOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function getBalance() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_getBalance'
+                        }
+                    }
+                });
+                updateOutput('accountOutput', `Balance: ${result.balance} ${result.unit}`);
+            } catch (error) {
+                updateOutput('accountOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function sendTransaction() {
+            const toAddress = document.getElementById('toAddress').value;
+            const amount = document.getElementById('amount').value;
+
+            if (!toAddress || !amount) {
+                alert('Please enter both address and amount');
+                return;
+            }
+
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_sendTransaction',
+                            params: {
+                                to: toAddress,
+                                amount: amount
+                            }
+                        }
+                    }
+                });
+                updateOutput('txOutput', JSON.stringify(result, null, 2));
+            } catch (error) {
+                updateOutput('txOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function signMessage() {
+            const message = document.getElementById('message').value;
+
+            if (!message) {
+                alert('Please enter a message to sign');
+                return;
+            }
+
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_signMessage',
+                            params: {
+                                message: message
+                            }
+                        }
+                    }
+                });
+                updateOutput('signOutput', JSON.stringify(result, null, 2));
+            } catch (error) {
+                updateOutput('signOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function switchToTestnet() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_switchNetwork',
+                            params: {
+                                network: 'testnet'
+                            }
+                        }
+                    }
+                });
+                updateOutput('networkOutput', `Switched to: ${result.network}`);
+            } catch (error) {
+                updateOutput('networkOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function switchToMainnet() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_switchNetwork',
+                            params: {
+                                network: 'mainnet'
+                            }
+                        }
+                    }
+                });
+                updateOutput('networkOutput', `Switched to: ${result.network}`);
+            } catch (error) {
+                updateOutput('networkOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function getTransactionHistory() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_getTransactionHistory'
+                        }
+                    }
+                });
+                updateOutput('networkOutput', JSON.stringify(result, null, 2));
+            } catch (error) {
+                updateOutput('networkOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function viewActiveSessions() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_dapp_sessions'
+                        }
+                    }
+                });
+                updateOutput('sessionOutput', JSON.stringify(result, null, 2));
+            } catch (error) {
+                updateOutput('sessionOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function disconnectDApp() {
+            try {
+                const result = await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_dapp_disconnect',
+                            params: {
+                                origin: window.location.origin
+                            }
+                        }
+                    }
+                });
+                updateOutput('sessionOutput', 'dApp disconnected successfully');
+            } catch (error) {
+                updateOutput('sessionOutput', `Error: ${error.message}`);
+            }
+        }
+
+        async function disconnectFromSnap() {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: 'npm:tron-snap',
+                        request: {
+                            method: 'tron_dapp_disconnect',
+                            params: {
+                                all: true
+                            }
+                        }
+                    }
+                });
+                
+                isConnected = false;
+                updateConnectionUI();
+                updateOutput('status', 'Disconnected from TRON Snap');
+            } catch (error) {
+                updateOutput('status', `Disconnect failed: ${error.message}`);
+            }
+        }
+
+        function updateConnectionUI() {
+            const buttons = [
+                'getAccountBtn', 'getBalanceBtn', 'sendTxBtn', 'signMsgBtn',
+                'testnetBtn', 'mainnetBtn', 'historyBtn', 'sessionsBtn', 'disconnectDAppBtn'
+            ];
+            
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = !isConnected;
+            });
+            
+            document.getElementById('disconnectBtn').disabled = !isConnected;
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${isConnected ? 'connected' : 'disconnected'}`;
+        }
+
+        function updateOutput(elementId, content) {
+            document.getElementById(elementId).textContent = content;
+        }
+
+        // Initialize UI
+        updateConnectionUI();
+    </script>
+</body>
+</html>

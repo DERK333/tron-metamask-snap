@@ -1,10 +1,12 @@
 import { OnRpcRequestHandler } from '@metamask/snaps-types';
 import { panel, text, heading, divider, copyable } from '@metamask/snaps-ui';
 import { TronService } from './tron';
+import { TronDAppConnector } from './dapp-connector';
 import { validateTronAddress, formatTrx } from './utils';
 import { TronAccount, TransactionHistory } from './types';
 
 const tronService = new TronService();
+const dappConnector = new TronDAppConnector(tronService);
 
 /**
  * Handle incoming RPC requests from dapps and MetaMask UI
@@ -32,6 +34,15 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }: { o
       
       case 'tron_switchNetwork':
         return await handleSwitchNetwork(request.params);
+      
+      case 'tron_dapp_connect':
+        return await handleDAppConnect(request.params);
+      
+      case 'tron_dapp_sessions':
+        return await handleDAppSessions();
+      
+      case 'tron_dapp_disconnect':
+        return await handleDAppDisconnect(request.params);
       
       default:
         throw new Error(`Method ${request.method} not supported`);
@@ -307,5 +318,89 @@ async function handleSwitchNetwork(params: any) {
     return { network };
   } catch (error: any) {
     throw new Error(`Failed to switch network: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Connect dApp to TRON snap
+ */
+async function handleDAppConnect(params: any): Promise<any> {
+  try {
+    const { origin, name, icon } = params || {};
+    
+    if (!origin || !name) {
+      throw new Error('dApp origin and name are required');
+    }
+    
+    const session = await dappConnector.connectDApp({
+      origin,
+      name,
+      icon,
+    });
+    
+    return {
+      connected: true,
+      session: {
+        accounts: session.accounts,
+        chainId: session.chainId,
+        origin: session.origin,
+        name: session.name,
+      }
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to connect dApp: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Get active dApp sessions
+ */
+async function handleDAppSessions(): Promise<any> {
+  try {
+    const sessions = dappConnector.getActiveSessions();
+    
+    await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: panel([
+          heading('Active dApp Connections'),
+          ...(sessions.length === 0 
+            ? [text('No active dApp connections.')]
+            : sessions.map(session => [
+                text(`**${session.name}**`),
+                text(`Origin: ${session.origin}`),
+                text(`Connected: ${new Date(session.connectedAt).toLocaleString()}`),
+                divider(),
+              ]).flat()
+          ),
+        ]),
+      },
+    });
+    
+    return { sessions };
+  } catch (error: any) {
+    throw new Error(`Failed to get sessions: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Disconnect dApp session
+ */
+async function handleDAppDisconnect(params: any): Promise<{ disconnected: boolean }> {
+  try {
+    const { origin, all } = params || {};
+    
+    if (all) {
+      await dappConnector.disconnectAll();
+    } else if (origin) {
+      await dappConnector.disconnectDApp(origin);
+    } else {
+      throw new Error('Must specify origin or all=true');
+    }
+    
+    return { disconnected: true };
+  } catch (error: any) {
+    throw new Error(`Failed to disconnect: ${error?.message || 'Unknown error'}`);
   }
 }

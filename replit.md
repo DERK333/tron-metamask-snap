@@ -6,11 +6,12 @@ This project is a MetaMask Snap that provides TRON blockchain integration capabi
 
 ## System Architecture
 
-The application follows a modular architecture designed specifically for MetaMask Snaps:
+The application follows a modular architecture designed specifically for MetaMask Snaps with dApp connectivity:
 
 ### Core Architecture Components
 - **Snap Entry Point**: `src/index.ts` - Main RPC request handler that routes incoming requests
 - **TRON Service Layer**: `src/tron.ts` - Core blockchain interaction logic and account management
+- **dApp Connector**: `src/dapp-connector.ts` - TronLink-style dApp connection and session management
 - **Utility Functions**: `src/utils.ts` - Helper functions for address validation, formatting, and data manipulation
 - **Type Definitions**: `src/types.ts` - TypeScript interfaces for type safety
 
@@ -23,7 +24,7 @@ The application follows a modular architecture designed specifically for MetaMas
 
 ### 1. RPC Request Handler
 - Handles incoming requests from dApps and MetaMask UI
-- Supports methods: `tron_connect`, `tron_getAccount`, `tron_getBalance`, `tron_sendTransaction`, `tron_signMessage`, `tron_getTransactionHistory`, `tron_switchNetwork`
+- Supports methods: `tron_connect`, `tron_getAccount`, `tron_getBalance`, `tron_sendTransaction`, `tron_signMessage`, `tron_getTransactionHistory`, `tron_switchNetwork`, `tron_dapp_connect`, `tron_dapp_sessions`, `tron_dapp_disconnect`
 - Implements error handling and user notifications
 
 ### 2. TRON Service
@@ -32,15 +33,22 @@ The application follows a modular architecture designed specifically for MetaMas
 - Integrates with TRON API endpoints for blockchain operations
 - Manages network switching between mainnet and testnet
 
-### 3. Account Management
+### 3. dApp Connection System
+- TronLink-compatible dApp connection management
+- Session tracking and approval workflows
+- Global tron object implementation for dApp compatibility
+- Secure origin-based session management
+
+### 4. Account Management
 - Derives TRON accounts from MetaMask's entropy
 - Securely stores private keys using MetaMask's state management
 - Supports both mainnet and testnet addresses
 
-### 4. Transaction Processing
+### 5. Transaction Processing
 - Handles TRX transfers with proper formatting
 - Implements transaction signing using TRON cryptographic standards
 - Provides transaction history retrieval and formatting
+- dApp-initiated transaction approval and execution
 
 ## Data Flow
 
@@ -93,6 +101,14 @@ Changelog:
   - Implemented account creation, balance checking, transactions
   - Added message signing and network switching functionality
   - Built and deployed snap successfully with development server
+
+- June 26, 2025. dApp Connection Integration
+  - Integrated TronLink-style dApp connection functionality
+  - Created custom dApp connector following TronLink's approach
+  - Added dApp session management and approval dialogs
+  - Implemented global tron object for dApp compatibility
+  - Created comprehensive demo page showing dApp integration
+  - Successfully built enhanced snap with dApp connection support
 ```
 
 ## User Preferences

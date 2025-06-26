@@ -64,4 +64,41 @@ export interface SignMessageResponse {
 export interface NetworkSwitchResponse {
     network: string;
 }
+/**
+ * WalletConnect session parameters
+ */
+export interface WalletConnectParams {
+    uri?: string;
+}
+/**
+ * WalletConnect session response
+ */
+export interface WalletConnectResponse {
+    connected: boolean;
+    session?: {
+        accounts: string[];
+        chainId: number;
+        peerMeta: {
+            name: string;
+            description: string;
+            url: string;
+        };
+    };
+}
+/**
+ * dApp connection request parameters
+ */
+export interface DAppConnectionParams {
+    origin: string;
+    name: string;
+    icon?: string;
+}
+/**
+ * dApp method call parameters
+ */
+export interface DAppMethodCall {
+    method: string;
+    params: any[];
+    origin: string;
+}
 //# sourceMappingURL=types.d.ts.map
