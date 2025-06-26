@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "TRON blockchain integration for MetaMask",
-  "proposedName": "TRON Snap",
+  "proposedName": "Tron BlockChain",
   "repository": {
     "type": "git",
     "url": "https://github.com/example/tron-snap.git"
