@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "description": "TRON blockchain integration for MetaMask",
+  "proposedName": "TRON Snap",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/tron-snap.git"
+  },
+  "source": {
+    "shasum": "",
+    "location": {
+      "npm": {
+        "filePath": "dist/bundle.js",
+        "iconPath": "images/icon.svg",
+        "packageName": "tron-snap",
+        "registry": "https://registry.npmjs.org/"
+      }
+    }
+  },
+  "initialPermissions": {
+    "snap_dialog": {},
+    "snap_manageState": {},
+    "snap_notify": {},
+    "endowment:network-access": {},
+    "endowment:rpc": {
+      "dapps": true,
+      "snaps": false
+    }
+  },
+  "manifestVersion": "0.1"
+}

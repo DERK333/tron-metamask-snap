@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRON Snap for MetaMask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .feature {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TRON Snap for MetaMask</h1>
+        
+        <div class="status" id="status">
+            ✅ TRON Snap is successfully built and ready for installation!
+        </div>
+
+        <div class="feature">
+            <h3>🔗 Connect TRON Account</h3>
+            <p>Create and manage TRON accounts derived from your MetaMask seed phrase using BIP44 derivation path.</p>
+        </div>
+
+        <div class="feature">
+            <h3>💰 Balance Management</h3>
+            <p>Check TRX balances on both TRON mainnet and testnet networks with real-time updates.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🔄 Send Transactions</h3>
+            <p>Send TRX transfers with confirmation dialogs, fee calculations, and transaction broadcasting.</p>
+        </div>
+
+        <div class="feature">
+            <h3>✍️ Message Signing</h3>
+            <p>Sign messages using your TRON private key for authentication and verification purposes.</p>
+        </div>
+
+        <div class="feature">
+            <h3>🌐 Network Switching</h3>
+            <p>Switch between TRON mainnet and testnet for development and testing purposes.</p>
+        </div>
+
+        <div class="feature">
+            <h3>📜 Transaction History</h3>
+            <p>View your recent TRON transactions with detailed information including amounts and timestamps.</p>
+        </div>
+
+        <h2>Installation Instructions</h2>
+        <ol>
+            <li>Install MetaMask Flask (development version) from <a href="https://metamask.io/flask/" target="_blank">metamask.io/flask</a></li>
+            <li>Open MetaMask Flask and enable developer mode</li>
+            <li>Use the snap ID: <code>local:http://localhost:5000</code></li>
+            <li>Or install via npm: <code>npm install tron-snap</code></li>
+        </ol>
+
+        <h2>Available RPC Methods</h2>
+        <ul>
+            <li><code>tron_connect</code> - Connect to TRON network</li>
+            <li><code>tron_getAccount</code> - Get current account information</li>
+            <li><code>tron_getBalance</code> - Check TRX balance</li>
+            <li><code>tron_sendTransaction</code> - Send TRX transactions</li>
+            <li><code>tron_signMessage</code> - Sign messages</li>
+            <li><code>tron_getTransactionHistory</code> - View transaction history</li>
+            <li><code>tron_switchNetwork</code> - Switch between mainnet/testnet</li>
+        </ul>
+
+        <h2>Technical Details</h2>
+        <div class="feature">
+            <p><strong>Snap Bundle:</strong> <a href="/dist/bundle.js" target="_blank">bundle.js</a> (9.94 KB)</p>
+            <p><strong>Manifest:</strong> <a href="/snap.manifest.json" target="_blank">snap.manifest.json</a></p>
+            <p><strong>Source Code:</strong> TypeScript with comprehensive error handling</p>
+            <p><strong>Networks:</strong> TRON Mainnet & Testnet</p>
+            <p><strong>Security:</strong> BIP44 key derivation, secure state management</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <p>🚀 Your TRON MetaMask Snap is ready for development and testing!</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if the snap bundle is accessible
+        fetch('/dist/bundle.js')
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('status').innerHTML = '✅ TRON Snap is successfully built and ready for installation!';
+                } else {
+                    document.getElementById('status').innerHTML = '⚠️ Snap bundle not found. Please ensure the build completed successfully.';
+                    document.getElementById('status').className = 'status error';
+                }
+            })
+            .catch(error => {
+                document.getElementById('status').innerHTML = '❌ Error loading snap bundle: ' + error.message;
+                document.getElementById('status').className = 'status error';
+            });
+    </script>
+</body>
+</html>
