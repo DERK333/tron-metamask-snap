@@ -2,6 +2,10 @@
 
 A MetaMask Snap that provides TRON blockchain integration, allowing users to manage TRON accounts, send transactions, sign messages, and connect with TRON dApps directly through MetaMask.
 
+**NPM Package**: [tron-metamask-snap](https://npmjs.com/package/tron-metamask-snap)  
+**GitHub Repository**: [https://github.com/Derk333/tron-metamask-snap](https://github.com/Derk333/tron-metamask-snap)  
+**Author**: Derk333
+
 ## Features
 
 - **Account Management**: Create and manage TRON accounts using MetaMask's secure entropy
