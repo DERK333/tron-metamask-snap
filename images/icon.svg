@@ -1,49 +1,6 @@
-<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- TRON red to black gradient background -->
-    <radialGradient id="tronBackground" cx="50%" cy="30%" r="80%">
-      <stop offset="0%" style="stop-color:#FF0013;stop-opacity:1" />
-      <stop offset="70%" style="stop-color:#CC0010;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
-    </radialGradient>
-    
-    <!-- White glow filter for text and logo -->
-    <filter id="whiteGlow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-      <feMerge> 
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-  
-  <!-- Background circle -->
-  <circle cx="128" cy="128" r="128" fill="url(#tronBackground)"/>
-  
-  <!-- TRON Logo Symbol - Geometric triangular design -->
-  <g fill="white" filter="url(#whiteGlow)">
-    <!-- Main TRON symbol - triangular network pattern -->
-    <path d="M128 60 L90 100 L128 120 L166 100 Z" fill="white" stroke="white" stroke-width="1"/>
-    <path d="M128 120 L90 100 L90 140 L128 160 Z" fill="white" opacity="0.8"/>
-    <path d="M128 120 L166 100 L166 140 L128 160 Z" fill="white" opacity="0.6"/>
-    <path d="M90 140 L128 160 L166 140 L128 180 Z" fill="white" opacity="0.4"/>
-    
-    <!-- Additional geometric elements -->
-    <circle cx="90" cy="100" r="3" fill="white"/>
-    <circle cx="166" cy="100" r="3" fill="white"/>
-    <circle cx="90" cy="140" r="3" fill="white"/>
-    <circle cx="166" cy="140" r="3" fill="white"/>
-    <circle cx="128" cy="180" r="3" fill="white"/>
-  </g>
-  
-  <!-- TRON Text -->
-  <text x="128" y="210" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold" filter="url(#whiteGlow)">TRON</text>
-  
-  <!-- Subtle connecting lines -->
-  <g stroke="white" stroke-width="1" opacity="0.3" fill="none">
-    <line x1="90" y1="100" x2="166" y2="100"/>
-    <line x1="90" y1="100" x2="128" y2="180"/>
-    <line x1="166" y1="100" x2="128" y2="180"/>
-    <line x1="90" y1="140" x2="166" y2="140"/>
-  </g>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="12" fill="#FF060F"/>
+  <path d="M32 8L48 24H40V40H24V24H16L32 8Z" fill="white"/>
+  <circle cx="32" cy="48" r="6" fill="white"/>
+  <text x="32" y="52" text-anchor="middle" fill="#FF060F" font-family="Arial" font-size="8" font-weight="bold">TRX</text>
 </svg>
