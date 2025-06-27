@@ -117,6 +117,11 @@ Changelog:
   - Prepared package for NPM publication with proper manifest
   - Generated package hash and created publication documentation
   - Set up complete web application with landing and dashboard pages
+
+- June 27, 2025. Package Updates
+  - Published to npm as "tron-metamask-snap" v1.0.0
+  - Updated to v1.0.1 with GitHub attribution (username: Derk333)
+  - Updated to v1.0.2 with support email: damailman@dmail.ai
 ```
 
 ## User Preferences
