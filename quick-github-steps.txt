@@ -1,0 +1,18 @@
+Quick Steps to Create Your GitHub Repository:
+
+1. Open your browser and go to: https://github.com/new
+
+2. Fill in these details:
+   - Repository name: tron-metamask-snap
+   - Description: TRON blockchain integration for MetaMask
+   - Choose: Public (required for npm packages)
+   - DON'T check any initialization options
+
+3. Click "Create repository"
+
+4. You'll see a page with instructions. Come back here after creating it.
+
+Your repository URL will be:
+https://github.com/Derk333/tron-metamask-snap
+
+Once created, the npm package links will work correctly!
