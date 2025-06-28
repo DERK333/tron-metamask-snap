@@ -1,0 +1,24 @@
+# How to Push to GitHub with Authentication
+
+You need to use your actual GitHub token, not "YOUR_GITHUB_TOKEN".
+
+## Get Your GitHub Token:
+1. Go to GitHub.com and log in
+2. Click your profile picture → Settings
+3. Scroll down to "Developer settings"
+4. Click "Personal access tokens" → "Tokens (classic)"
+5. Click "Generate new token (classic)"
+6. Name it (e.g., "Replit Push")
+7. Check the "repo" checkbox
+8. Click "Generate token"
+9. COPY THE TOKEN NOW!
+
+## Push Your Code:
+Replace YOUR_ACTUAL_TOKEN_HERE with the token you just copied:
+
+git push https://DERK333:YOUR_ACTUAL_TOKEN_HERE@github.com/DERK333/tron-metamask-snap.git main
+
+Example (with fake token):
+git push https://DERK333:ghp_1234567890abcdef@github.com/DERK333/tron-metamask-snap.git main
+
+The token will look like: ghp_xxxxxxxxxxxxx
