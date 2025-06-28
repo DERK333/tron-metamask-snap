@@ -1,0 +1,38 @@
+{
+  "name": "tron-metamask-snap",
+  "version": "1.0.5",
+  "description": "TRON blockchain integration for MetaMask - manage TRON accounts, send transactions, and connect with dApps",
+  "main": "dist/bundle.js",
+  "files": [
+    "dist/bundle.js",
+    "snap.manifest.json",
+    "images/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DERK333/tron-metamask-snap.git"
+  },
+  "keywords": [
+    "metamask",
+    "snap",
+    "tron",
+    "blockchain",
+    "wallet",
+    "web3",
+    "crypto",
+    "dapp",
+    "staking",
+    "voting",
+    "multilingual",
+    "i18n"
+  ],
+  "author": "Derk333",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DERK333/tron-metamask-snap/issues"
+  },
+  "homepage": "https://github.com/DERK333/tron-metamask-snap",
+  "support": {
+    "email": "damailman@dmail.ai"
+  }
+}
