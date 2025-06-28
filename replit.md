@@ -167,6 +167,12 @@ Changelog:
   - Fallback to English for untranslated strings
   - Successfully compiled snap bundle (70.1 KiB)
   - Created multilingual demo page for testing
+
+- June 28, 2025. Version Updates and Security Policy
+  - Prepared versions 1.0.5, 1.0.6, and 1.0.7 to fix npm bundle mismatch issues
+  - Created comprehensive SECURITY.md file with vulnerability reporting guidelines
+  - Security reports directed to damailman@dmail.ai
+  - Defined supported versions and coordinated disclosure policy
 ```
 
 ## User Preferences
