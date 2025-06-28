@@ -1,0 +1,277 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+#
+# Microsoft Security DevOps (MSDO) is a command line application which integrates static analysis tools into the development cycle.
+# MSDO installs, configures and runs the latest versions of static analysis tools
+# (including, but not limited to, SDL/security and compliance tools).
+#
+# The Microsoft Security DevOps action is currently in beta and runs on the windows-latest queue,
+# as well as Windows self hosted agents. ubuntu-latest support coming soon.
+#
+# For more information about the action , check out https://github.com/microsoft/security-devops-action
+#
+# Please note this workflow do not integrate your GitHub Org with Microsoft Defender For DevOps. You have to create an integration
+# and provide permission before this can report data back to azure.
+# Read the official documentation here : https://learn.microsoft.com/en-us/azure/defender-for-cloud/quickstart-onboard-github
+
+name: "Microsoft Defender For Devops"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '26 8 * * 0'
+
+jobs:
+  MSDO:
+    # currently only windows latest is supported
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          5.0.x
+          6.0.x
+    - name: Run Microsoft Security DevOps
+      uses: microsoft/security-devops-action@v1.6.0
+      id: msdo
+    - name: Upload results to Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.msdo.outputs.sarifFile }}
+           
+            - name: Paperspace Deploy
+  # You may pin to the exact commit or the version.
+  # uses: Paperspace/deploy-action@e19c92caa3220cff5d5bf62f86832c0d87745612
+  uses: Paperspace/deploy-action@v1.4
+  with:
+    # Paperspace API Key. Defaults to env.PAPERSPACE_API_KEY.
+    apiKey: # optional
+    # Project ID that the deployment lives under.
+    projectId: 
+    # Relative path to configuration file to deploy.
+    configPath: # optional
+    # Optional container image to use for the deployment.
+    image: # optional
+    
+                 - name: Setup Node.js environment
+  uses: actions/setup-node@v3.9.1
+  with:
+    # Set always-auth in npmrc.
+    always-auth: # optional, default is false
+    # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+    node-version: # optional
+    # File containing the version Spec of the version to use.  Examples: .nvmrc, .node-version, .tool-versions.
+    node-version-file: # optional
+    # Target architecture for Node to use. Examples: x86, x64. Will use system architecture by default.
+    architecture: # optional
+    # Set this option if you want the action to check for the latest available version that satisfies the version spec.
+    check-latest: # optional
+    # Optional registry to set up for auth. Will set the registry in a project level .npmrc and .yarnrc file, and set up auth to read in from env.NODE_AUTH_TOKEN.
+    registry-url: # optional
+    # Optional scope for authenticating against scoped registries. Will fall back to the repository owner when using the GitHub Packages registry (https://npm.pkg.github.com/).
+    scope: # optional
+    # Used to pull node distributions from node-versions. Since there's a default, this is typically not supplied by the user. When running this action on github.com, the default value is sufficient. When running on GHES, you can pass a personal access token for github.com if you are experiencing rate limiting.
+    token: # optional, default is ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn, pnpm.
+    cache: # optional
+    # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
+    cache-dependency-path: # optional
+
+                           - name: Orcs Have Issues Profile Badges
+  # You may pin to the exact commit or the version.
+  # uses: MikeAmputer/orcs-earn-badges@714437504a25ae7f2f6dd09982633a63888fef8a
+  uses: MikeAmputer/orcs-earn-badges@v1
+  with:
+    # GitHub token with content write permission
+    token: 
+    # The owner and repository name, for example, MikeAmputer/MikeAmputer
+    repo: # optional, default is ${{ github.repository }}
+    # Repository owner
+    owner: # optional, default is ${{ github.repository_owner }}
+    # Branch
+    branch: # optional, default is ${{ github.ref_name }}
+    # Path to readme
+    readme: # optional, default is README.md
+    # Size of badge icons in pixels
+    size: # optional, default is 64
+
+  
+            - name: Orca Security - SAST Security
+  # You may pin to the exact commit or the version.
+  # uses: orcasecurity/shiftleft-sast-action@0cba3fb169659d2b72b0d0d7ec9330bd904661e4
+  uses: orcasecurity/shiftleft-sast-action@v1.0.6
+  with:
+    # Orca API Token used for Authentication
+    api_token: 
+    # Exit code for failed execution due to policy violations
+    exit_code: # optional
+    # Disable color output
+    no_color: # optional, default is false
+    # Project Key name
+    project_key: 
+    # Disable logs and warnings output
+    silent: # optional, default is false
+    # Suppress error reporting to the monitoring platform
+    disable_err_report: # optional, default is false
+    # Paths or directories to scan (comma-separated)
+    path: 
+    # List of paths to be excluded from scan (comma-separated)
+    exclude_paths: # optional
+    # Format for displaying the results
+    format: # optional
+    # Output directory
+    output: # optional
+    # Set the maximum duration for the CLI execution. valid time units ("s", "m", "h")
+    timeout: # optional
+    # Number of lines to be display in CLI results
+    preview_lines: # optional
+    # Prints results to console in the provided format (only when --output is provided)
+    console_output: # optional
+    # Path to configuration file (json, yaml or toml)
+    config: # optional
+    # Show github annotations on pull requests
+    show_annotations: # optional, default is true
+    # Maximum file size to be scanned in MB. Bigger files will be skipped
+    max_file_size: # optional
+    # Scan log display name (on Orca platform)
+    display_name: # optional
+    # Debug mode
+    debug: # optional, default is false
+    # The directory path to specify where the logs should be written to on debug mode. Default to the current working directory
+    log_path: # optional
+          
+          
+            - name: Orca Security - IaC Security
+  # You may pin to the exact commit or the version.
+  # uses: orcasecurity/shiftleft-iac-action@f171681da633548da011fa984c13b84f14744352
+  uses: orcasecurity/shiftleft-iac-action@v1
+  with:
+    # Orca API Token used for Authentication
+    api_token: 
+    # Exit code for failed execution due to policy violations
+    exit_code: # optional
+    # Disable color output
+    no_color: # optional, default is false
+    # Project Key name
+    project_key: 
+    # Disable logs and warnings output
+    silent: # optional, default is false
+    # Suppress error reporting to the monitoring platform
+    disable_err_report: # optional, default is false
+    # Paths or directories to scan (comma-separated)
+    path: 
+    # List of paths to be excluded from scan (comma-separated)
+    exclude_paths: # optional
+    # Limit scan to the specified list of cloud providers (comma-separated)
+    cloud_provider: # optional
+    # Format for displaying the results
+    format: # optional
+    # Output directory
+    output: # optional
+    # Limit scan to the specified list of platforms (comma-separated)
+    platform: # optional
+    # Exclude the specified list of platforms from scan (comma-separated)
+    exclude_platform: # optional
+    # Number of seconds the control has to execute before being canceled
+    control_timeout: # optional
+    # Ignore any failures that happened while executing any of the controls
+    ignore_failed_exec_controls: # optional
+    # Set the maximum duration for the CLI execution. valid time units ("s", "m", "h")
+    timeout: # optional
+    # Number of lines to be display in CLI results
+    preview_lines: # optional
+    # Show only failed issues in CLI results
+    show_failed_issues_only: # optional, default is false
+    # Prints results to console in the provided format (only when --output is provided)
+    console_output: # optional
+    # Path to configuration file (json, yaml or toml)
+    config: # optional
+    # Show github annotations on pull requests
+    show_annotations: # optional, default is true
+    # Paths to custom controls (comma-separated)
+    custom_controls: # optional
+    # Generates a JSON file in the desired location, containing an internal representation of scanned files, which can be utilized as input for Rego policies
+    generate_rego_input: # optional
+    # Path where terraform variables are present
+    terraform_vars_path: # optional
+    # Include compressed files in scan
+    include_compressed_files: # optional, default is false
+    # Maximum file size to be scanned in MB. Bigger files will be skipped
+    max_file_size: # optional
+    # Scan log display name (on Orca platform)
+    display_name: # optional
+    # Debug mode
+    debug: # optional, default is false
+    # The directory path to specify where the logs should be written to on debug mode. Default to the current working directory
+    log_path: # optional
+          
+          
+                      - name: Orca Security - SCA / Secret Scanning
+  # You may pin to the exact commit or the version.
+  # uses: orcasecurity/shiftleft-fs-action@2a15c5a09ac3ead1d7a5d2ce9fdf911cdfaae3a7
+  uses: orcasecurity/shiftleft-fs-action@v1
+  with:
+    # Orca API Token used for Authentication
+    api_token: 
+    # Exit code for failed execution due to policy violations
+    exit_code: # optional
+    # Disable color output
+    no_color: # optional, default is false
+    # Project Key name
+    project_key: 
+    # Disable logs and warnings output
+    silent: # optional, default is false
+    # Suppress error reporting to the monitoring platform
+    disable_err_report: # optional, default is false
+    # Disables the secret detection scanning
+    disable_secret: # optional, default is false
+    # Do not show detailed view of the vulnerabilities findings
+    hide_vulnerabilities: # optional, default is false
+    # Number of logical CPUs to be used for secret scanning (default 10)
+    num_cpu: # optional
+    # Paths or directories to scan (comma-separated)
+    path: 
+    # exceptions YAML filepath.
+    exceptions_filepath: # optional
+    # path to custom secret controls file.
+    custom_secret_controls: # optional
+    # Format for displaying the results
+    format: # optional, default is table
+    # Output directory
+    output: # optional
+    # Set the maximum duration for the CLI execution. valid time units ("s", "m", "h")
+    timeout: # optional
+    # Show only failed issues in CLI results
+    show_failed_issues_only: # optional, default is false
+    # Prints results to console in the provided format (only when --output is provided)
+    console_output: # optional, default is table
+    # path to configuration file (json, yaml or toml)
+    config: # optional
+    # show github annotations on pull requests
+    show_annotations: # optional, default is true
+    # Scan log display name (on Orca platform)
+    display_name: # optional
+    # filter out skipped vulnerabilities from result
+    hide_skipped_vulnerabilities: # optional, default is false
+    # Set the maximum secrets that can be found, when reaching this number secret scan will stop
+    max_secret: # optional
+    # List of paths to be excluded from scan (comma-separated). Example: './notToBeScanned/,example.tf'
+    exclude_paths: # optional
+    # Show dependency origin tree of vulnerable packages
+    dependency_tree: # optional, default is false
+    # List of security issues to detect (comma-separated)
+    security_checks: # optional, default is vulns,secret
+    # Debug mode
+    debug: # optional, default is false
+    # Disable active verification
+    disable_active_verification: # optional, default is false
+    # The directory path to specify where the logs should be written to on debug mode. Default to the current working directory
+    log_path: # optional
+          
