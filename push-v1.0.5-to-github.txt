@@ -1,0 +1,11 @@
+# Quick Commands to Update GitHub with v1.0.5
+
+# First, remove the lock file if it exists:
+rm -f .git/index.lock
+
+# Then run these commands:
+git add snap.manifest.json package-v1.0.5.json
+git commit -m "Release v1.0.5: Fix npm package bundle issue"
+git push https://DERK333:YOUR_GITHUB_TOKEN@github.com/DERK333/tron-metamask-snap.git main
+
+# Replace YOUR_GITHUB_TOKEN with your actual GitHub token!
