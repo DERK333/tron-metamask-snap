@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test TRON Snap Staking & Voting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test TRON Snap Staking & Voting Features</h1>
+
+    <div class="test-section">
+        <h2>Step 1: Connect to TRON Snap</h2>
+        <button onclick="testConnect()">Connect</button>
+        <div id="connectResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 2: Check Initial Staking Info</h2>
+        <button onclick="testGetStakingInfo()" disabled id="stakingInfoBtn">Get Staking Info</button>
+        <div id="stakingInfoResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 3: Test Staking 10 TRX for Energy</h2>
+        <button onclick="testStake()" disabled id="stakeBtn">Stake 10 TRX</button>
+        <div id="stakeResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 4: Get Super Representatives List</h2>
+        <button onclick="testGetSRs()" disabled id="getSRBtn">Get Super Representatives</button>
+        <div id="srResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 5: Test Voting (100 votes)</h2>
+        <button onclick="testVote()" disabled id="voteBtn">Vote for Top SR</button>
+        <div id="voteResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 6: Test Unstaking 5 TRX</h2>
+        <button onclick="testUnstake()" disabled id="unstakeBtn">Unstake 5 TRX</button>
+        <div id="unstakeResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Step 7: Test Withdrawal (Should fail if no expired balance)</h2>
+        <button onclick="testWithdraw()" disabled id="withdrawBtn">Test Withdraw</button>
+        <div id="withdrawResult" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const snapId = 'npm:tron-metamask-snap';
+        let account = null;
+
+        async function testConnect() {
+            const resultDiv = document.getElementById('connectResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Connecting...';
+                
+                // Request snap
+                await ethereum.request({
+                    method: 'wallet_requestSnaps',
+                    params: { [snapId]: {} }
+                });
+                
+                // Connect to TRON
+                account = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: { method: 'tron_connect' }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Connected!\nAddress: ${account.address}\nNetwork: ${account.network}`;
+                
+                // Enable other buttons
+                document.querySelectorAll('button[disabled]').forEach(btn => btn.disabled = false);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testGetStakingInfo() {
+            const resultDiv = document.getElementById('stakingInfoResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Getting staking info...';
+                
+                const info = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: { method: 'tron_getStakingInfo' }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(info, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testStake() {
+            const resultDiv = document.getElementById('stakeResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Staking 10 TRX for ENERGY...';
+                
+                const result = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: {
+                            method: 'tron_stake',
+                            params: {
+                                amount: '10',
+                                resource: 'ENERGY'
+                            }
+                        }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Success!\nTX Hash: ${result.txHash}\nAmount: ${result.amount} TRX\nResource: ${result.resource}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testGetSRs() {
+            const resultDiv = document.getElementById('srResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Getting Super Representatives...';
+                
+                const srs = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: { method: 'tron_getSuperRepresentatives' }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Found ${srs.length} Super Representatives:\n${JSON.stringify(srs.slice(0, 3), null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testVote() {
+            const resultDiv = document.getElementById('voteResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Voting for Binance Staking...';
+                
+                const result = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: {
+                            method: 'tron_vote',
+                            params: {
+                                votes: [{
+                                    address: 'TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH',
+                                    name: 'Binance Staking',
+                                    count: 100
+                                }]
+                            }
+                        }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Success!\nTX Hash: ${result.txHash}\nVoted for ${result.votes} SR(s)\nTotal votes: ${result.totalVotes}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testUnstake() {
+            const resultDiv = document.getElementById('unstakeResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Unstaking 5 TRX from ENERGY...';
+                
+                const result = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: {
+                            method: 'tron_unstake',
+                            params: {
+                                amount: '5',
+                                resource: 'ENERGY'
+                            }
+                        }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Success!\nTX Hash: ${result.txHash}\nAmount: ${result.amount} TRX\nNote: 14-day waiting period`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function testWithdraw() {
+            const resultDiv = document.getElementById('withdrawResult');
+            try {
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Testing withdrawal...';
+                
+                const result = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: { method: 'tron_withdrawExpiredUnfrozen' }
+                    }
+                });
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Success!\nTX Hash: ${result.txHash}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}\n(This is expected if no balance has completed the 14-day period)`;
+            }
+        }
+
+        // Check MetaMask
+        if (typeof window.ethereum === 'undefined') {
+            alert('Please install MetaMask to test the TRON Snap');
+        }
+    </script>
+</body>
+</html>
