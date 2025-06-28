@@ -178,4 +178,4 @@ MIT License - see LICENSE file for details
 For issues and questions:
 - GitHub Issues: https://github.com/your-username/tron-metamask-snap/issues
 - TRON Network Documentation: https://developers.tron.network/
-- MetaMask Snaps Documentation: https://docs.metamask.io/snaps/
+- MetaMask Snaps Documentation: https://docs.metamask.io/snaps/# tron-metamask-snap
