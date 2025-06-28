@@ -1,0 +1,26 @@
+# npm Login and Publish Steps
+
+## Step 1: Login to npm
+npm login
+
+# It will ask for:
+- Username: (your npm username)
+- Password: (your npm password)
+- Email: damailman@dmail.ai
+- One-time password from your authenticator app
+
+## Step 2: Verify you're logged in
+npm whoami
+
+## Step 3: Publish v1.0.7
+npm publish
+
+# Enter your OTP when prompted
+
+## Step 4: Verify it's published
+npm view tron-metamask-snap@1.0.7
+
+## Then proceed with GitHub push:
+git add package.json snap.manifest.json SECURITY.md package-v1.0.7.json
+git commit -m "Release v1.0.7: Fix bundle shasum mismatch"
+git push https://DERK333:YOUR_GITHUB_TOKEN@github.com/DERK333/tron-metamask-snap.git main
