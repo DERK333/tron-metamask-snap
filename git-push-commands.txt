@@ -1,0 +1,27 @@
+# Git Commands to Update GitHub Repository
+
+# Step 1: Check current status
+git status
+
+# Step 2: Add all changes
+git add -A
+
+# Step 3: Commit with descriptive message
+git commit -m "Release v1.0.4: Add multilingual support
+
+- Added i18n support for 5 languages (EN, CN, ES, FR, JP)
+- Created translation system with language persistence
+- Added new API methods: tron_setLanguage and tron_getLanguage
+- Updated bundle to 70.1 KiB
+- Created multilingual demo page
+- Updated manifest to v1.0.4"
+
+# Step 4: Push to GitHub
+git push origin main
+
+# If you need to force push:
+git push origin main --force
+
+# Optional: Create a release tag
+git tag -a v1.0.4 -m "Release version 1.0.4: Multilingual support"
+git push origin v1.0.4
