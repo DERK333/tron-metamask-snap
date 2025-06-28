@@ -1,27 +1,28 @@
-Fix GitHub Authentication Issue
-==============================
+# GitHub Push Issue - Token Security
 
-The error shows "DERK333" (uppercase) trying to push to "Derk333" (mixed case).
+The push is being blocked because your GitHub personal access token is exposed in the files:
+- merge-and-push.sh
+- sync-github.sh  
+- attached_assets/Pasted--workspace-git-push-https...txt
 
-Solution: Use the correct username with your Personal Access Token
+GitHub's security system detected this and is protecting your account.
 
-1. First, create a Personal Access Token on GitHub:
-   - Go to: https://github.com/settings/tokens/new
-   - Name: "Replit Push Token"
-   - Select scope: "repo" (full control of private repositories)
-   - Click "Generate token"
-   - COPY THE TOKEN (you won't see it again!)
+## Solution Steps:
 
-2. Update your git remote with the correct username:
-   git remote set-url origin https://Derk333@github.com/Derk333/tron-metamask-snap.git
+1. First, remove the files with exposed tokens from git history:
+   git rm merge-and-push.sh sync-github.sh
+   git rm attached_assets/Pasted--workspace-git-push-https-DERK333-ghp-Psc1d9JN0TMbuVG7KNSQyyL7Gs4I0527qDyk-github-com-DERK333-tr-1751143548436_1751143548437.txt
+   git commit -m "Remove files with exposed tokens"
 
-3. Push your code:
-   git push -u origin main
+2. Create a new personal access token on GitHub:
+   - Go to GitHub Settings > Developer settings > Personal access tokens
+   - Generate a new token with 'repo' permissions
+   - Save it securely (don't commit it to the repo!)
 
-4. When prompted for password, paste your Personal Access Token (not your GitHub password)
+3. Use the new token to push:
+   git push https://DERK333:[NEW_TOKEN]@github.com/DERK333/tron-metamask-snap.git main
 
-Alternative: If the username still causes issues, use the token directly:
-   git remote set-url origin https://[YOUR-TOKEN]@github.com/Derk333/tron-metamask-snap.git
-   git push -u origin main
+4. After successful push, revoke the old exposed token:
+   Token ending in: 7qDyk
 
-Important: Make sure you use "Derk333" (exact case) not "DERK333"
+Important: Never commit access tokens to your repository!
