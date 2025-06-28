@@ -1,0 +1,28 @@
+GitHub Push Authentication Required
+===================================
+
+The push timed out because GitHub needs your credentials.
+
+Option 1: Use HTTPS with Personal Access Token (Recommended)
+------------------------------------------------------------
+1. Go to GitHub → Settings → Developer Settings → Personal Access Tokens
+2. Generate a new token with 'repo' permissions
+3. Run: git push -u origin main
+4. When prompted:
+   - Username: Derk333
+   - Password: [paste your personal access token]
+
+Option 2: Use SSH
+-----------------
+1. Set up SSH keys for GitHub (if not already done)
+2. Change remote to SSH:
+   git remote set-url origin git@github.com:Derk333/tron-metamask-snap.git
+3. Run: git push -u origin main
+
+Option 3: Use GitHub CLI
+------------------------
+1. Install GitHub CLI: gh auth login
+2. Follow the authentication prompts
+3. Run: git push -u origin main
+
+Your repository URL: https://github.com/Derk333/tron-metamask-snap
