@@ -1,43 +1,18 @@
 #!/bin/bash
 
-echo "🔧 Fixing Git and Pushing to GitHub"
-echo "==================================="
+echo "Fixing git and pushing to GitHub..."
 echo ""
 
-# First, let's check if we already have a remote
-echo "Checking current git remotes..."
-git remote -v
+# Remove any lock files
+rm -f .git/config.lock
+rm -f .git/objects/maintenance.lock
 
-# If origin exists, remove it first
-if git remote | grep -q 'origin'; then
-    echo "Removing existing origin..."
-    git remote remove origin
-fi
+# Pull with merge strategy
+git pull https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main --strategy=ours --allow-unrelated-histories
 
-# Add the correct remote
-echo "Adding GitHub repository..."
-git remote add origin https://github.com/Derk333/tron-metamask-snap.git
+# Push to GitHub
+git push https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main
 
-# Check current branch
-BRANCH=$(git branch --show-current)
-echo "Current branch: $BRANCH"
-
-# Try to push
-echo "Pushing to GitHub..."
-git push -u origin $BRANCH
-
-if [ $? -eq 0 ]; then
-    echo ""
-    echo "✅ Success! Your code is now on GitHub at:"
-    echo "https://github.com/Derk333/tron-metamask-snap"
-else
-    echo ""
-    echo "If the push failed, try these manual steps:"
-    echo "1. Remove git lock files:"
-    echo "   rm -f .git/config.lock .git/index.lock"
-    echo ""
-    echo "2. Then run:"
-    echo "   git remote remove origin"
-    echo "   git remote add origin https://github.com/Derk333/tron-metamask-snap.git"
-    echo "   git push -u origin main"
-fi
+echo ""
+echo "Done! Check your repository at:"
+echo "https://github.com/Derk333/tron-metamask-snap"

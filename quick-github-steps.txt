@@ -1,18 +1,15 @@
-Quick Steps to Create Your GitHub Repository:
+Run these commands one by one in your terminal:
 
-1. Open your browser and go to: https://github.com/new
+Step 1: Set merge strategy
+git config pull.rebase false
 
-2. Fill in these details:
-   - Repository name: tron-metamask-snap
-   - Description: TRON blockchain integration for MetaMask
-   - Choose: Public (required for npm packages)
-   - DON'T check any initialization options
+Step 2: Pull and merge
+git pull https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main --allow-unrelated-histories
 
-3. Click "Create repository"
+Step 3: Push your code
+git push https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main
 
-4. You'll see a page with instructions. Come back here after creating it.
-
-Your repository URL will be:
+Your repository will be updated at:
 https://github.com/Derk333/tron-metamask-snap
 
-Once created, the npm package links will work correctly!
+Note: If Step 1 fails with "could not lock config file", skip it and go directly to Step 2.

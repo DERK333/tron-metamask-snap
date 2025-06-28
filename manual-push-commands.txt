@@ -1,0 +1,12 @@
+Run these commands in your terminal:
+
+1. First, pull the remote changes:
+   git pull https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main --allow-unrelated-histories
+
+2. If there are merge conflicts, accept your local version.
+
+3. Then push your code:
+   git push https://Derk333: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@github.com/Derk333/tron-metamask-snap.git main
+
+Your repository will then be updated at:
+https://github.com/Derk333/tron-metamask-snap
