@@ -1,0 +1,28 @@
+# Publishing v1.0.7 to npm and GitHub
+
+## Step 1: Publish to npm
+npm publish
+
+# Enter your npm OTP when prompted
+
+## Step 2: Wait 1-2 minutes for npm to update
+
+## Step 3: Add files to git
+git add package.json snap.manifest.json SECURITY.md package-v1.0.7.json
+
+## Step 4: Commit the changes
+git commit -m "Release v1.0.7: Fix bundle shasum mismatch
+
+- Updated manifest to v1.0.7
+- Fixed npm package bundle issue
+- Added SECURITY.md file
+- Snap now installs correctly in MetaMask"
+
+## Step 5: Push to GitHub
+git push https://DERK333:YOUR_GITHUB_TOKEN@github.com/DERK333/tron-metamask-snap.git main
+
+## Step 6: Create a release tag
+git tag -a v1.0.7 -m "Version 1.0.7: Fixed bundle issue"
+git push https://DERK333:YOUR_GITHUB_TOKEN@github.com/DERK333/tron-metamask-snap.git v1.0.7
+
+# Remember to replace YOUR_GITHUB_TOKEN with your actual GitHub token!

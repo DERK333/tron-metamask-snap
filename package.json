@@ -34,10 +34,5 @@
   "homepage": "https://github.com/DERK333/tron-metamask-snap",
   "support": {
     "email": "damailman@dmail.ai"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "webpack": "^5.99.9",
-    "webpack-cli": "^6.0.1"
   }
 }
