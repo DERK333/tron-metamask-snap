@@ -5,6 +5,7 @@ import { TronDAppConnector } from './dapp-connector';
 import { validateTronAddress, formatTrx } from './utils';
 import { TronAccount, TransactionHistory } from './types';
 import { TransactionPreviewService, TransactionPreview } from './transaction-preview';
+import { i18n } from './i18n/i18n';
 
 const tronService = new TronService();
 const previewService = new TransactionPreviewService(tronService);
@@ -64,6 +65,12 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }: { o
       case 'tron_withdrawExpiredUnfrozen':
         return await handleWithdrawExpiredUnfrozen();
       
+      case 'tron_setLanguage':
+        return await handleSetLanguage(request.params);
+        
+      case 'tron_getLanguage':
+        return await handleGetLanguage();
+      
       default:
         throw new Error(`Method ${request.method} not supported`);
     }
@@ -92,12 +99,12 @@ async function handleConnect() {
       params: {
         type: 'confirmation',
         content: panel([
-          heading('Connect to TRON Network'),
-          text('This will create a TRON account derived from your MetaMask seed phrase.'),
+          heading(i18n.t('connection.title')),
+          text(i18n.t('connection.description')),
           divider(),
-          text('**Account Address:**'),
+          text(i18n.t('connection.accountAddress')),
           copyable(account.address),
-          text('**Network:**'),
+          text(i18n.t('connection.network')),
           text(account.network),
         ]),
       },
@@ -108,15 +115,15 @@ async function handleConnect() {
         method: 'snap_notify',
         params: {
           type: 'inApp',
-          message: 'Successfully connected to TRON network!',
+          message: i18n.t('connection.success'),
         },
       });
       return account;
     } else {
-      throw new Error('User rejected connection');
+      throw new Error(i18n.t('connection.rejected'));
     }
   } catch (error: any) {
-    throw new Error(`Failed to connect to TRON: ${error?.message || 'Unknown error'}`);
+    throw new Error(`${i18n.t('connection.failed')}: ${error?.message || i18n.t('error.unknown')}`);
   }
 }
 
@@ -163,18 +170,18 @@ async function handleSendTransaction(params: any) {
     const { to, amount, memo } = params;
     
     if (!validateTronAddress(to)) {
-      throw new Error('Invalid TRON address');
+      throw new Error(i18n.t('transaction.invalidAddress'));
     }
     
     if (!amount || parseFloat(amount) <= 0) {
-      throw new Error('Invalid amount');
+      throw new Error(i18n.t('transaction.invalidAmount'));
     }
     
     const account = await tronService.getAccount();
     const balance = await tronService.getBalance();
     
     if (parseFloat(amount) > parseFloat(formatTrx(balance))) {
-      throw new Error('Insufficient balance');
+      throw new Error(i18n.t('transaction.insufficientBalance'));
     }
     
     // Build interactive transaction preview
@@ -712,5 +719,51 @@ async function handleWithdrawExpiredUnfrozen() {
     return { txHash };
   } catch (error: any) {
     throw new Error(`Withdrawal failed: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Set user language preference
+ */
+async function handleSetLanguage(params: any) {
+  try {
+    const { language } = params;
+    const availableLanguages = i18n.getAvailableLanguages();
+    const validLangCodes = availableLanguages.map(l => l.code);
+    
+    if (!validLangCodes.includes(language)) {
+      throw new Error(`Invalid language. Supported: ${validLangCodes.join(', ')}`);
+    }
+    
+    await i18n.setLanguage(language);
+    
+    await snap.request({
+      method: 'snap_notify',
+      params: {
+        type: 'inApp',
+        message: i18n.t('common.success'),
+      },
+    });
+    
+    return { language, success: true };
+  } catch (error: any) {
+    throw new Error(`Failed to set language: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Get current language setting
+ */
+async function handleGetLanguage() {
+  try {
+    const currentLanguage = i18n.getLanguage();
+    const availableLanguages = i18n.getAvailableLanguages();
+    
+    return {
+      current: currentLanguage,
+      available: availableLanguages,
+    };
+  } catch (error: any) {
+    throw new Error(`Failed to get language: ${error?.message || 'Unknown error'}`);
   }
 }

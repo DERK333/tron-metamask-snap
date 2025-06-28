@@ -157,6 +157,16 @@ Changelog:
   - All staking and voting features included in release
   - Package size: 11.6 kB (unpacked: 41.2 kB)
   - Features: staking, voting, transaction preview, dApp connectivity
+
+- June 28, 2025. Multilingual Support Implementation (v1.0.4)
+  - Added comprehensive i18n system supporting 5 languages (EN, CN, ES, FR, JP)
+  - Created translation service with language detection and persistence
+  - Implemented all UI strings with translation keys
+  - Added API methods: tron_setLanguage and tron_getLanguage
+  - Language preference stored in snap state
+  - Fallback to English for untranslated strings
+  - Successfully compiled snap bundle (70.1 KiB)
+  - Created multilingual demo page for testing
 ```
 
 ## User Preferences

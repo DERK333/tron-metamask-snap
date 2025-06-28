@@ -13,9 +13,23 @@ A MetaMask Snap that seamlessly integrates TRON blockchain functionality into Me
 - ⚡ **Staking**: Stake TRX for energy or bandwidth
 - 🗳️ **Voting**: Vote for Super Representatives
 - 🔍 **Transaction Preview**: Risk assessment, fee estimation, and simulation
+- 🌍 **Multilingual Support**: Available in 5 languages (EN, CN, ES, FR, JP)
 
-## New in v1.0.3
+## New in v1.0.4
 
+- 🌍 Added multilingual support for 5 languages:
+  - English (EN)
+  - Chinese Simplified (中文)
+  - Spanish (Español)
+  - French (Français)
+  - Japanese (日本語)
+- Language auto-detection and persistence
+- All UI dialogs and messages are now translatable
+- Added language selection API methods
+
+## Previous versions
+
+### v1.0.3
 - Added staking functionality for energy and bandwidth
 - Implemented voting system for Super Representatives
 - Added withdrawal function for unstaked TRX

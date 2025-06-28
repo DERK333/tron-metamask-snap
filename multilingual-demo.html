@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRON Snap - Multilingual Support Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .language-selector {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .language-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    .language-btn:hover {
+      background: #0056b3;
+    }
+    .language-btn.active {
+      background: #28a745;
+    }
+    .demo-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 5px;
+    }
+    .demo-section h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      font-weight: bold;
+      display: none;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+    .language-info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 5px;
+    }
+    .flag {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 TRON Snap Multilingual Support Demo</h1>
+    
+    <div class="language-selector">
+      <h2>Select Language / 选择语言 / Seleccionar idioma</h2>
+      <button class="language-btn" data-lang="en" onclick="setLanguage('en')">
+        <span class="flag">🇬🇧</span>English
+      </button>
+      <button class="language-btn" data-lang="zh" onclick="setLanguage('zh')">
+        <span class="flag">🇨🇳</span>中文
+      </button>
+      <button class="language-btn" data-lang="es" onclick="setLanguage('es')">
+        <span class="flag">🇪🇸</span>Español
+      </button>
+      <button class="language-btn" data-lang="fr" onclick="setLanguage('fr')">
+        <span class="flag">🇫🇷</span>Français
+      </button>
+      <button class="language-btn" data-lang="ja" onclick="setLanguage('ja')">
+        <span class="flag">🇯🇵</span>日本語
+      </button>
+    </div>
+
+    <div class="language-info">
+      <p><strong>Current Language:</strong> <span id="current-lang">Not connected</span></p>
+      <p><strong>Available Languages:</strong> <span id="available-langs">Loading...</span></p>
+    </div>
+
+    <div class="demo-section">
+      <h3>Test Language Features</h3>
+      <button onclick="connectSnap()">Connect to TRON Snap</button>
+      <button onclick="getCurrentLanguage()">Get Current Language</button>
+      <button onclick="testConnection()">Test Connection Dialog</button>
+      <button onclick="testTransaction()">Test Transaction Dialog</button>
+      <button onclick="testStaking()">Test Staking Dialog</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    const SNAP_ID = 'npm:tron-metamask-snap';
+    let isSnapConnected = false;
+
+    function showStatus(message, isError = false) {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = `status ${isError ? 'error' : 'success'}`;
+    }
+
+    async function connectSnap() {
+      try {
+        const result = await ethereum.request({
+          method: 'wallet_requestSnaps',
+          params: {
+            [SNAP_ID]: {}
+          }
+        });
+
+        if (result) {
+          isSnapConnected = true;
+          showStatus('Successfully connected to TRON Snap!');
+          await getCurrentLanguage();
+        }
+      } catch (error) {
+        showStatus(`Failed to connect: ${error.message}`, true);
+      }
+    }
+
+    async function getCurrentLanguage() {
+      try {
+        const result = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: {
+            snapId: SNAP_ID,
+            request: {
+              method: 'tron_getLanguage'
+            }
+          }
+        });
+
+        document.getElementById('current-lang').textContent = 
+          result.current + ' (' + result.available.find(l => l.code === result.current)?.name + ')';
+        
+        document.getElementById('available-langs').textContent = 
+          result.available.map(l => l.name).join(', ');
+
+        // Update active button
+        document.querySelectorAll('.language-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.lang === result.current);
+        });
+
+        showStatus('Language information retrieved successfully');
+      } catch (error) {
+        showStatus(`Failed to get language: ${error.message}`, true);
+      }
+    }
+
+    async function setLanguage(language) {
+      if (!isSnapConnected) {
+        showStatus('Please connect to TRON Snap first', true);
+        return;
+      }
+
+      try {
+        const result = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: {
+            snapId: SNAP_ID,
+            request: {
+              method: 'tron_setLanguage',
+              params: { language }
+            }
+          }
+        });
+
+        showStatus(`Language changed to ${language} successfully`);
+        await getCurrentLanguage();
+      } catch (error) {
+        showStatus(`Failed to set language: ${error.message}`, true);
+      }
+    }
+
+    async function testConnection() {
+      if (!isSnapConnected) {
+        showStatus('Please connect to TRON Snap first', true);
+        return;
+      }
+
+      try {
+        const result = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: {
+            snapId: SNAP_ID,
+            request: {
+              method: 'tron_connect'
+            }
+          }
+        });
+
+        showStatus('Connection dialog shown in selected language');
+      } catch (error) {
+        showStatus(`Error: ${error.message}`, true);
+      }
+    }
+
+    async function testTransaction() {
+      if (!isSnapConnected) {
+        showStatus('Please connect to TRON Snap first', true);
+        return;
+      }
+
+      try {
+        // This will show an error dialog in the selected language
+        const result = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: {
+            snapId: SNAP_ID,
+            request: {
+              method: 'tron_sendTransaction',
+              params: {
+                to: 'TExampleAddress123',
+                amount: '10'
+              }
+            }
+          }
+        });
+      } catch (error) {
+        showStatus('Transaction dialog shown in selected language (error expected)');
+      }
+    }
+
+    async function testStaking() {
+      if (!isSnapConnected) {
+        showStatus('Please connect to TRON Snap first', true);
+        return;
+      }
+
+      try {
+        // This will show the staking dialog in the selected language
+        const result = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: {
+            snapId: SNAP_ID,
+            request: {
+              method: 'tron_stake',
+              params: {
+                amount: '100',
+                resource: 'ENERGY'
+              }
+            }
+          }
+        });
+      } catch (error) {
+        showStatus('Staking dialog shown in selected language');
+      }
+    }
+
+    // Check if MetaMask is installed
+    if (typeof window.ethereum === 'undefined') {
+      showStatus('Please install MetaMask to use this demo', true);
+    }
+  </script>
+</body>
+</html>
