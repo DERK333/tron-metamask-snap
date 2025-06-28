@@ -1,5 +1,5 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "TRON blockchain integration for MetaMask - manage TRON accounts, send transactions, and connect with dApps",
   "proposedName": "TRON Snap",
   "repository": {
