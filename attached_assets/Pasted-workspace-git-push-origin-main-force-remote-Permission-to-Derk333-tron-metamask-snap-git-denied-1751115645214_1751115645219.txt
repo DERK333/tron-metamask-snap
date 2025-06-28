@@ -1,0 +1,48 @@
+workspace$ git push origin main --force
+remote: Permission to Derk333/tron-metamask-snap.git denied to DERK333.
+fatal: unablegit push https://Derk333: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@github.com/DERK333/tron-metamask-snap.git main --force$ git push https://Derk333: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@github.com/DERK333/tron-metamask-snap.git m
+Enumerating objects: 231, done.
+Counting objects: 100% (231/231), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (222/222), done.
+Writing objects: 100% (231/231), 1.68 MiB | 5.33 MiB/s, done.
+Total 231 (delta 88), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (88/88), done.
+To https://github.com/DERK333/tron-metamask-snap.git
+ + 8f3a6dc...d3e5622 main -> main (forced update)
+~/workspace$ npm login
+npm notice Log in on https://registry.npmjs.org/
+Login at:
+https://www.npmjs.com/login?next=/login/cli/50e06f62-2a5b-496b-90fa-5b27693af2f6
+Press ENTER to open in the browser...
+
+Logged in on https://registry.npmjs.org/.
+~/workspace$ npm publish
+npm warn publish npm auto-corrected some errors in your package.json when publishing.  Please run "npm pkg fix" to address these errors.
+npm warn publish errors corrected:
+npm warn publish "repository.url" was normalized to "git+https://github.com/DERK333/tron-metamask-snap.git"
+npm notice
+npm notice 📦  tron-metamask-snap@1.0.3
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 1.7kB README.md
+npm notice 36.4kB dist/bundle.js
+npm notice 387B images/icon.svg
+npm notice 710B package.json
+npm notice 901B snap.manifest.json
+npm notice Tarball Details
+npm notice name: tron-metamask-snap
+npm notice version: 1.0.3
+npm notice filename: tron-metamask-snap-1.0.3.tgz
+npm notice package size: 11.6 kB
+npm notice unpacked size: 41.2 kB
+npm notice shasum: 71012b1452585cd7d407aac9d6f1486f686425ad
+npm notice integrity: sha512-t7nWJX0l+MbQz[...]EKBphsntGEb2Q==
+npm notice total files: 6
+npm notice
+npm notice Publishing to https://registry.npmjs.org/ with tag latest and public access
+Authenticate your account at:
+https://www.npmjs.com/auth/cli/c1ae46cc-d322-4dfe-8630-4d9e563e9c30
+Press ENTER to open in the browser...
+
++ tron-metamask-snap@1.0.3

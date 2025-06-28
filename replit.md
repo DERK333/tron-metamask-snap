@@ -148,6 +148,15 @@ Changelog:
   - Integrated voting power calculation (1 TRX = 1 vote)
   - Built comprehensive demo page showcasing staking and voting
   - Successfully compiled snap bundle (35.6 KiB)
+
+- June 28, 2025. Published Version 1.0.3
+  - Successfully published to npm registry
+  - Fixed manifest shasum mismatch issue
+  - Package available at: https://www.npmjs.com/package/tron-metamask-snap
+  - GitHub repository force-pushed with latest updates
+  - All staking and voting features included in release
+  - Package size: 11.6 kB (unpacked: 41.2 kB)
+  - Features: staking, voting, transaction preview, dApp connectivity
 ```
 
 ## User Preferences
