@@ -1,0 +1,42 @@
+~/workspace$ git push https://DERK333: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@github.com/DERK333/tron-metamask-snap.git main
+Enumerating objects: 47, done.
+Counting objects: 100% (43/43), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (36/36), done.
+Writing objects: 100% (36/36), 8.96 KiB | 2.99 MiB/s, done.
+Total 36 (delta 27), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (27/27), completed with 6 local objects.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: 
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote: 
+remote:     - Push cannot contain secrets
+remote: 
+remote:     
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:     
+remote:     
+remote:       —— GitHub Personal Access Token ——————————————————————
+remote:        locations:
+remote:          - commit: b2c7e5b879a43feedd4e4ea2a464ef7a71fa758d
+remote:            path: merge-and-push.sh:8
+remote:          - commit: b2c7e5b879a43feedd4e4ea2a464ef7a71fa758d
+remote:            path: merge-and-push.sh:11
+remote:          - commit: fdaa3d65a6b281fd11aa3e2359b4a55ea6007dfe
+remote:            path: sync-github.sh:4
+remote:          - commit: fdaa3d65a6b281fd11aa3e2359b4a55ea6007dfe
+remote:            path: sync-github.sh:7
+remote:          - commit: fdaa3d65a6b281fd11aa3e2359b4a55ea6007dfe
+remote:            path: sync-github.sh:11
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/DERK333/tron-metamask-snap/security/secret-scanning/unblock-secret/2z9VyOs54gvCVzmrmZKAxfeaHAm
+remote:     
+remote: 
+remote: 
+To https://github.com/DERK333/tron-metamask-snap.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/DERK333/tron-metamask-snap.git'
