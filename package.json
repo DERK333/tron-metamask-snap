@@ -1,6 +1,6 @@
 {
   "name": "tron-metamask-snap",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "TRON blockchain integration for MetaMask - manage TRON accounts, send transactions, and connect with dApps",
   "main": "dist/bundle.js",
   "files": [
