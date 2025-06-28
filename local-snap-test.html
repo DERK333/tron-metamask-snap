@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRON Snap - Local Installation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .output {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 TRON Snap - Local Installation Test</h1>
+        
+        <div class="warning">
+            <strong>⚠️ NPM Package Issue</strong><br>
+            The published npm package has an outdated manifest. Use this page to install the snap locally for testing.
+        </div>
+
+        <div class="info">
+            <strong>ℹ️ Local Installation</strong><br>
+            This method installs the snap directly from your local server, bypassing npm.
+            Perfect for development and testing!
+        </div>
+
+        <h2>Option 1: Install Local Snap</h2>
+        <p>This will install the snap from your local development server:</p>
+        <button onclick="installLocalSnap()">Install Local TRON Snap</button>
+        <div id="localResult" class="output" style="display: none;"></div>
+
+        <h2>Option 2: Connect to Existing Snap</h2>
+        <p>If you already have the snap installed, just connect:</p>
+        <button onclick="connectToSnap()">Connect to TRON Snap</button>
+        <div id="connectResult" class="output" style="display: none;"></div>
+
+        <h2>Test Snap Functions</h2>
+        <button onclick="testAccount()" disabled id="testBtn">Test Get Account</button>
+        <button onclick="testStaking()" disabled id="stakingBtn">Test Staking Info</button>
+        <div id="testResult" class="output" style="display: none;"></div>
+    </div>
+
+    <script>
+        const localSnapId = 'local:http://localhost:5000';
+        const npmSnapId = 'npm:tron-metamask-snap';
+        let currentSnapId = null;
+
+        async function installLocalSnap() {
+            const resultDiv = document.getElementById('localResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                resultDiv.textContent = 'Installing local snap...';
+                
+                // Install snap from local server
+                const snaps = await ethereum.request({
+                    method: 'wallet_requestSnaps',
+                    params: {
+                        [localSnapId]: {}
+                    }
+                });
+                
+                currentSnapId = localSnapId;
+                resultDiv.className = 'output success';
+                resultDiv.textContent = 'Local snap installed successfully!\nSnap ID: ' + localSnapId;
+                
+                // Enable test buttons
+                document.getElementById('testBtn').disabled = false;
+                document.getElementById('stakingBtn').disabled = false;
+                
+            } catch (error) {
+                resultDiv.className = 'output';
+                resultDiv.textContent = 'Error: ' + error.message + '\n\nNote: Make sure MetaMask Flask is installed and developer mode is enabled.';
+            }
+        }
+
+        async function connectToSnap() {
+            const resultDiv = document.getElementById('connectResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                resultDiv.textContent = 'Connecting to snap...';
+                
+                // Try npm snap first
+                let snapId = npmSnapId;
+                try {
+                    const snaps = await ethereum.request({
+                        method: 'wallet_getSnaps'
+                    });
+                    
+                    if (!snaps[npmSnapId] && !snaps[localSnapId]) {
+                        throw new Error('No TRON snap installed');
+                    }
+                    
+                    // Use whichever is installed
+                    snapId = snaps[npmSnapId] ? npmSnapId : localSnapId;
+                } catch (e) {
+                    // Try connecting anyway
+                }
+                
+                // Connect to get account
+                const account = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId,
+                        request: {
+                            method: 'tron_connect'
+                        }
+                    }
+                });
+                
+                currentSnapId = snapId;
+                resultDiv.className = 'output success';
+                resultDiv.textContent = `Connected successfully!\nSnap ID: ${snapId}\nAccount: ${account.address}\nNetwork: ${account.network || 'mainnet'}`;
+                
+                // Enable test buttons
+                document.getElementById('testBtn').disabled = false;
+                document.getElementById('stakingBtn').disabled = false;
+                
+            } catch (error) {
+                resultDiv.className = 'output';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testAccount() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            
+            if (!currentSnapId) {
+                resultDiv.textContent = 'Please install or connect to snap first';
+                return;
+            }
+            
+            try {
+                resultDiv.textContent = 'Getting account info...';
+                
+                const account = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: currentSnapId,
+                        request: {
+                            method: 'tron_getAccount'
+                        }
+                    }
+                });
+                
+                resultDiv.className = 'output success';
+                resultDiv.textContent = 'Account Info:\n' + JSON.stringify(account, null, 2);
+                
+            } catch (error) {
+                resultDiv.className = 'output';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testStaking() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            
+            if (!currentSnapId) {
+                resultDiv.textContent = 'Please install or connect to snap first';
+                return;
+            }
+            
+            try {
+                resultDiv.textContent = 'Getting staking info...';
+                
+                const info = await ethereum.request({
+                    method: 'wallet_invokeSnap',
+                    params: {
+                        snapId: currentSnapId,
+                        request: {
+                            method: 'tron_getStakingInfo'
+                        }
+                    }
+                });
+                
+                resultDiv.className = 'output success';
+                resultDiv.textContent = 'Staking Info:\n' + JSON.stringify(info, null, 2);
+                
+            } catch (error) {
+                resultDiv.className = 'output';
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Check if MetaMask is installed
+        if (typeof window.ethereum === 'undefined') {
+            document.querySelector('.container').innerHTML = 
+                '<h1>❌ MetaMask Required</h1><p>Please install MetaMask Flask (developer version) to test local snaps.</p>';
+        }
+    </script>
+</body>
+</html>

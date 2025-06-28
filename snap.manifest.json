@@ -7,7 +7,7 @@
     "url": "https://github.com/your-username/tron-snap.git"
   },
   "source": {
-    "shasum": "RUPkOmQcTIRv8VnKYtF2AoVopo6/dIv3V4e090vYBBU=",
+    "shasum": "cJksvj4m3l1GbEnGbyX6A7HZAEVVk5X9AfFvkUxzo+c=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
