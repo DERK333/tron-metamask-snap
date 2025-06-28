@@ -1,0 +1,27 @@
+Fix GitHub Authentication Issue
+==============================
+
+The error shows "DERK333" (uppercase) trying to push to "Derk333" (mixed case).
+
+Solution: Use the correct username with your Personal Access Token
+
+1. First, create a Personal Access Token on GitHub:
+   - Go to: https://github.com/settings/tokens/new
+   - Name: "Replit Push Token"
+   - Select scope: "repo" (full control of private repositories)
+   - Click "Generate token"
+   - COPY THE TOKEN (you won't see it again!)
+
+2. Update your git remote with the correct username:
+   git remote set-url origin https://Derk333@github.com/Derk333/tron-metamask-snap.git
+
+3. Push your code:
+   git push -u origin main
+
+4. When prompted for password, paste your Personal Access Token (not your GitHub password)
+
+Alternative: If the username still causes issues, use the token directly:
+   git remote set-url origin https://[YOUR-TOKEN]@github.com/Derk333/tron-metamask-snap.git
+   git push -u origin main
+
+Important: Make sure you use "Derk333" (exact case) not "DERK333"
