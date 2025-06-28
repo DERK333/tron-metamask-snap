@@ -1,44 +1,24 @@
-# NPM Publication Commands
+# Publish TRON MetaMask Snap v1.0.3
 
-Run these commands in your terminal to publish your TRON Snap:
-
-## Step 1: Login to NPM (if not already logged in)
+## Step 1: Login to npm
 ```bash
 npm login
 ```
-Enter your npmjs.com username, password, and email when prompted.
+Enter your npm username, password, and email when prompted.
 
-## Step 2: Publish Your Package
+## Step 2: Publish
 ```bash
 npm publish
 ```
 
-That's it! Your package will be published to npmjs.com.
+## What's included in v1.0.3:
+- ✅ TRX staking for energy/bandwidth  
+- ✅ Voting for Super Representatives  
+- ✅ Withdrawal for unstaked TRX  
+- ✅ Enhanced transaction preview  
+- ✅ Fixed manifest shasum issue
 
-## After Publication
+## After publishing:
+Your snap will be live at: https://www.npmjs.com/package/tron-metamask-snap
 
-Your snap will be available at:
-- https://npmjs.com/package/tron-metamask-snap
-
-Users can install it with:
-```bash
-npm install tron-metamask-snap
-```
-
-Or use it in MetaMask:
-```javascript
-await ethereum.request({
-  method: 'wallet_requestSnaps',
-  params: {
-    'npm:tron-metamask-snap': {}
-  }
-});
-```
-
-## Package Details
-- Name: tron-metamask-snap
-- Version: 1.0.0
-- Size: ~22 KB
-- License: MIT
-
-Your package includes all TRON functionality and authentication features.
+Users can install it with snap ID: `npm:tron-metamask-snap`
