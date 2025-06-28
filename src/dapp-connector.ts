@@ -2,6 +2,7 @@ import { panel, heading, text, divider, copyable } from '@metamask/snaps-ui';
 import { TronService } from './tron';
 import { TronAccount } from './types';
 import { tronDatabase, DatabaseUser, DatabaseSession } from './database';
+import { TransactionPreviewService, TransactionPreview } from './transaction-preview';
 
 export interface DAppSession {
   connected: boolean;
@@ -26,12 +27,14 @@ export interface DAppConnectionRequest {
  */
 export class TronDAppConnector {
   private tronService: TronService;
+  private previewService: TransactionPreviewService;
   private activeSessions: Map<string, DAppSession> = new Map();
   private globalTronObject: any = null;
   private currentUser: DatabaseUser | null = null;
 
   constructor(tronService: TronService) {
     this.tronService = tronService;
+    this.previewService = new TransactionPreviewService(tronService);
     this.initializeGlobalTronObject();
     this.initializeDatabase();
   }
@@ -363,28 +366,46 @@ export class TronDAppConnector {
   }
 
   /**
-   * Show transaction approval dialog
+   * Show transaction approval dialog with interactive preview
    */
   private async showTransactionApproval(txParams: any, action: 'sign' | 'send'): Promise<boolean> {
+    const account = await this.tronService.getAccount();
+    const to = txParams.to || txParams.to_address || 'Unknown';
+    const amount = txParams.value || txParams.amount || '0';
+    
+    // Build interactive transaction preview
+    const networkStatus = await this.previewService.getNetworkStatus(account.network);
+    const riskLevel = await this.previewService.analyzeTransactionRisk(to, amount, account.address);
+    const simulationResult = await this.previewService.simulateTransaction(to, amount, account.address);
+    const contractDetails = await this.previewService.getContractDetails(to, txParams.data);
+    
+    const preview: TransactionPreview = {
+      from: account.address,
+      to,
+      amount,
+      memo: txParams.data,
+      estimatedFee: 1,
+      networkStatus,
+      riskLevel,
+      contractInteraction: contractDetails,
+      simulationResult
+    };
+    
+    const previewPanels = await this.previewService.buildTransactionPreview(preview);
+    
+    // Add dApp-specific header
+    const panels = [
+      heading(`🔐 ${action === 'sign' ? 'Sign' : 'Send'} Transaction Request`),
+      text(`**dApp:** ${this.activeSessions.get(txParams.origin)?.name || 'Unknown'}`),
+      divider(),
+      ...previewPanels
+    ];
+    
     const result = await snap.request({
       method: 'snap_dialog',
       params: {
         type: 'confirmation',
-        content: panel([
-          heading(`${action === 'sign' ? 'Sign' : 'Send'} Transaction`),
-          text(`A dApp is requesting to ${action} a transaction:`),
-          divider(),
-          text('**To:**'),
-          copyable(txParams.to || txParams.to_address || 'Unknown'),
-          text('**Amount:**'),
-          text(`${txParams.value || txParams.amount || '0'} TRX`),
-          ...(txParams.data ? [
-            text('**Data:**'),
-            text(String(txParams.data).substring(0, 100) + (String(txParams.data).length > 100 ? '...' : ''))
-          ] : []),
-          divider(),
-          text('**Estimated Fee:** ~1 TRX'),
-        ]),
+        content: panel(panels),
       },
     });
 

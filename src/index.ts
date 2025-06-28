@@ -4,8 +4,10 @@ import { TronService } from './tron';
 import { TronDAppConnector } from './dapp-connector';
 import { validateTronAddress, formatTrx } from './utils';
 import { TronAccount, TransactionHistory } from './types';
+import { TransactionPreviewService, TransactionPreview } from './transaction-preview';
 
 const tronService = new TronService();
+const previewService = new TransactionPreviewService(tronService);
 const dappConnector = new TronDAppConnector(tronService);
 
 /**
@@ -136,7 +138,7 @@ async function handleGetBalance() {
 }
 
 /**
- * Send TRON transaction
+ * Send TRON transaction with interactive preview
  */
 async function handleSendTransaction(params: any) {
   try {
@@ -157,23 +159,31 @@ async function handleSendTransaction(params: any) {
       throw new Error('Insufficient balance');
     }
     
+    // Build interactive transaction preview
+    const networkStatus = await previewService.getNetworkStatus(account.network);
+    const riskLevel = await previewService.analyzeTransactionRisk(to, amount, account.address);
+    const simulationResult = await previewService.simulateTransaction(to, amount, account.address);
+    const contractDetails = await previewService.getContractDetails(to);
+    
+    const preview: TransactionPreview = {
+      from: account.address,
+      to,
+      amount,
+      memo,
+      estimatedFee: 1,
+      networkStatus,
+      riskLevel,
+      contractInteraction: contractDetails,
+      simulationResult
+    };
+    
+    const previewPanels = await previewService.buildTransactionPreview(preview);
+    
     const result = await snap.request({
       method: 'snap_dialog',
       params: {
         type: 'confirmation',
-        content: panel([
-          heading('Confirm TRON Transaction'),
-          text('**From:**'),
-          copyable(account.address),
-          text('**To:**'),
-          copyable(to),
-          text('**Amount:**'),
-          text(`${amount} TRX`),
-          ...(memo ? [text('**Memo:**'), text(memo)] : []),
-          divider(),
-          text('**Network Fee:** ~1 TRX'),
-          text('**Total:** ~' + (parseFloat(amount) + 1).toString() + ' TRX'),
-        ]),
+        content: panel(previewPanels),
       },
     });
     

@@ -128,6 +128,16 @@ Changelog:
   - Repository URL: https://github.com/DERK333/tron-metamask-snap
   - Includes full source code, build configuration, and documentation
   - Ready for community contributions and collaboration
+
+- June 28, 2025. Interactive Transaction Preview Feature
+  - Implemented comprehensive transaction preview system
+  - Added real-time network status monitoring (congestion, block height)
+  - Integrated automatic risk assessment with warnings for high-risk transactions
+  - Built transaction simulation to predict success/failure before execution
+  - Added smart contract detection and interaction details
+  - Enhanced fee estimation with energy and bandwidth calculations
+  - Created unified transaction summary view
+  - Successfully compiled and integrated into both direct snap usage and dApp connector
 ```
 
 ## User Preferences
