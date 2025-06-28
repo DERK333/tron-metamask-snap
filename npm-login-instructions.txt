@@ -1,0 +1,23 @@
+NPM Login Instructions
+=====================
+
+To publish your package, you need to log in to npm first.
+
+1. Run this command:
+   npm login
+
+2. You'll be prompted for:
+   - Username: (your npm username)
+   - Password: (your npm password)
+   - Email: (your npm email)
+   - One-time password: (if you have 2FA enabled)
+
+3. After successful login, run:
+   npm whoami
+   
+   This should show your npm username.
+
+4. Then publish with your OTP:
+   npm publish --otp=YOUR_6_DIGIT_CODE
+
+Note: The OTP code changes every 30 seconds, so you'll need a fresh code when publishing.
