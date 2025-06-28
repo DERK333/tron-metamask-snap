@@ -1,0 +1,22 @@
+GitHub Push Instructions (Clean)
+================================
+
+Run these commands in your Replit Shell:
+
+Step 1: Stage all changes
+git add .
+
+Step 2: Commit your TRON Snap
+git commit -m "TRON MetaMask Snap v1.0.2 - Complete implementation with dApp connector"
+
+Step 3: Push to GitHub
+When prompted:
+- Username: Derk333
+- Password: [Use your GitHub Personal Access Token that starts with ghp_]
+
+git push origin main --force
+
+Your TRON Snap will be available at:
+https://github.com/Derk333/tron-metamask-snap
+
+Note: The --force flag will override the remote repository with your local version.
