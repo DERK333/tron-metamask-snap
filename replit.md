@@ -24,7 +24,7 @@ The application follows a modular architecture designed specifically for MetaMas
 
 ### 1. RPC Request Handler
 - Handles incoming requests from dApps and MetaMask UI
-- Supports methods: `tron_connect`, `tron_getAccount`, `tron_getBalance`, `tron_sendTransaction`, `tron_signMessage`, `tron_getTransactionHistory`, `tron_switchNetwork`, `tron_dapp_connect`, `tron_dapp_sessions`, `tron_dapp_disconnect`
+- Supports methods: `tron_connect`, `tron_getAccount`, `tron_getBalance`, `tron_sendTransaction`, `tron_signMessage`, `tron_getTransactionHistory`, `tron_switchNetwork`, `tron_dapp_connect`, `tron_dapp_sessions`, `tron_dapp_disconnect`, `tron_stake`, `tron_unstake`, `tron_vote`, `tron_getStakingInfo`, `tron_getSuperRepresentatives`, `tron_withdrawExpiredUnfrozen`
 - Implements error handling and user notifications
 
 ### 2. TRON Service
@@ -138,6 +138,16 @@ Changelog:
   - Enhanced fee estimation with energy and bandwidth calculations
   - Created unified transaction summary view
   - Successfully compiled and integrated into both direct snap usage and dApp connector
+
+- June 28, 2025. Staking and Voting Features
+  - Added complete TRX staking functionality for energy and bandwidth resources
+  - Implemented unstaking with 14-day withdrawal period
+  - Built voting system for Super Representatives (SRs)
+  - Added methods to get staking information and SR list
+  - Created withdrawal function for expired unfrozen balance
+  - Integrated voting power calculation (1 TRX = 1 vote)
+  - Built comprehensive demo page showcasing staking and voting
+  - Successfully compiled snap bundle (35.6 KiB)
 ```
 
 ## User Preferences

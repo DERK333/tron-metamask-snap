@@ -46,6 +46,24 @@ export const onRpcRequest: OnRpcRequestHandler = async ({ origin, request }: { o
       case 'tron_dapp_disconnect':
         return await handleDAppDisconnect(request.params);
       
+      case 'tron_stake':
+        return await handleStake(request.params);
+      
+      case 'tron_unstake':
+        return await handleUnstake(request.params);
+      
+      case 'tron_vote':
+        return await handleVote(request.params);
+      
+      case 'tron_getStakingInfo':
+        return await handleGetStakingInfo();
+      
+      case 'tron_getSuperRepresentatives':
+        return await handleGetSuperRepresentatives();
+      
+      case 'tron_withdrawExpiredUnfrozen':
+        return await handleWithdrawExpiredUnfrozen();
+      
       default:
         throw new Error(`Method ${request.method} not supported`);
     }
@@ -412,5 +430,287 @@ async function handleDAppDisconnect(params: any): Promise<{ disconnected: boolea
     return { disconnected: true };
   } catch (error: any) {
     throw new Error(`Failed to disconnect: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Handle TRX staking
+ */
+async function handleStake(params: any) {
+  try {
+    const { amount, resource = 'ENERGY' } = params;
+    
+    if (!amount || parseFloat(amount) <= 0) {
+      throw new Error('Invalid staking amount');
+    }
+    
+    // Show staking confirmation dialog
+    const result = await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'confirmation',
+        content: panel([
+          heading('Stake TRX'),
+          text(`You are about to stake **${formatTrx(amount)} TRX** for **${resource}**.`),
+          divider(),
+          text('**Staking Details:**'),
+          text(`• Resource: ${resource}`),
+          text(`• Lock Period: 3 days`),
+          text(`• You can unstake anytime, but need to wait 14 days to withdraw`),
+          divider(),
+          text('**Benefits:**'),
+          text(`• Earn voting rights (1 TRX = 1 vote)`),
+          text(`• Get free ${resource.toLowerCase()} for transactions`),
+          text(`• Support the TRON network`),
+        ]),
+      },
+    });
+    
+    if (!result) {
+      throw new Error('Staking cancelled by user');
+    }
+    
+    const txHash = await tronService.stakeTRX(amount, resource as 'ENERGY' | 'BANDWIDTH');
+    
+    await snap.request({
+      method: 'snap_notify',
+      params: {
+        type: 'inApp',
+        message: `Successfully staked ${formatTrx(amount)} TRX for ${resource}`,
+      },
+    });
+    
+    return { txHash, amount, resource };
+  } catch (error: any) {
+    throw new Error(`Staking failed: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Handle TRX unstaking
+ */
+async function handleUnstake(params: any) {
+  try {
+    const { amount, resource = 'ENERGY' } = params;
+    
+    if (!amount || parseFloat(amount) <= 0) {
+      throw new Error('Invalid unstaking amount');
+    }
+    
+    // Show unstaking confirmation dialog
+    const result = await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'confirmation',
+        content: panel([
+          heading('Unstake TRX'),
+          text(`You are about to unstake **${formatTrx(amount)} TRX** from **${resource}**.`),
+          divider(),
+          text('**Important:**'),
+          text(`• Unstaked TRX will be locked for 14 days`),
+          text(`• You will lose voting rights for this amount`),
+          text(`• Free ${resource.toLowerCase()} will be reduced`),
+          divider(),
+          text('Are you sure you want to continue?'),
+        ]),
+      },
+    });
+    
+    if (!result) {
+      throw new Error('Unstaking cancelled by user');
+    }
+    
+    const txHash = await tronService.unstakeTRX(amount, resource as 'ENERGY' | 'BANDWIDTH');
+    
+    await snap.request({
+      method: 'snap_notify',
+      params: {
+        type: 'inApp',
+        message: `Successfully unstaked ${formatTrx(amount)} TRX. Available for withdrawal in 14 days.`,
+      },
+    });
+    
+    return { txHash, amount, resource };
+  } catch (error: any) {
+    throw new Error(`Unstaking failed: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Handle voting for Super Representatives
+ */
+async function handleVote(params: any) {
+  try {
+    const { votes } = params;
+    
+    if (!votes || !Array.isArray(votes) || votes.length === 0) {
+      throw new Error('Invalid votes parameter');
+    }
+    
+    // Calculate total votes
+    const totalVotes = votes.reduce((sum: number, v: any) => sum + (v.count || 0), 0);
+    
+    // Get staking info to check available votes
+    const stakingInfo = await tronService.getStakingInfo();
+    const availableVotes = Math.floor(stakingInfo.frozen);
+    
+    if (totalVotes > availableVotes) {
+      throw new Error(`Insufficient voting power. You have ${availableVotes} votes available.`);
+    }
+    
+    // Show voting confirmation dialog
+    const votesList = votes.map((v: any) => [
+      text(`• ${v.name || v.address.substring(0, 10) + '...'}: **${v.count} votes**`),
+    ]).flat();
+    
+    const result = await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'confirmation',
+        content: panel([
+          heading('Vote for Super Representatives'),
+          text(`Total Votes: **${totalVotes}** / ${availableVotes} available`),
+          divider(),
+          text('**Your Votes:**'),
+          ...votesList,
+          divider(),
+          text('**Note:**'),
+          text('• Votes are updated every 6 hours'),
+          text('• You can change votes anytime'),
+          text('• Voting helps secure the network'),
+        ]),
+      },
+    });
+    
+    if (!result) {
+      throw new Error('Voting cancelled by user');
+    }
+    
+    const txHash = await tronService.voteForSR(votes);
+    
+    await snap.request({
+      method: 'snap_notify',
+      params: {
+        type: 'inApp',
+        message: `Successfully voted for ${votes.length} Super Representative(s)`,
+      },
+    });
+    
+    return { txHash, votes: votes.length, totalVotes };
+  } catch (error: any) {
+    throw new Error(`Voting failed: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Get staking information
+ */
+async function handleGetStakingInfo() {
+  try {
+    const stakingInfo = await tronService.getStakingInfo();
+    
+    const votesContent = stakingInfo.votes.length > 0
+      ? stakingInfo.votes.map(v => text(`• ${v.name}: ${v.votes} votes`))
+      : [text('No active votes')];
+    
+    await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: panel([
+          heading('Staking Information'),
+          divider(),
+          text('**Staked Balance:**'),
+          text(`• Total: ${formatTrx(stakingInfo.frozen.toString())} TRX`),
+          text(`• For Energy: ${formatTrx(stakingInfo.frozenEnergy.toString())} TRX`),
+          text(`• For Bandwidth: ${formatTrx(stakingInfo.frozenBandwidth.toString())} TRX`),
+          divider(),
+          text('**Voting Power:**'),
+          text(`• Available: ${Math.floor(stakingInfo.frozen)} votes`),
+          divider(),
+          text('**Active Votes:**'),
+          ...votesContent,
+          divider(),
+          text(`**Rewards:** ${formatTrx(stakingInfo.rewards.toString())} TRX`),
+        ]),
+      },
+    });
+    
+    return stakingInfo;
+  } catch (error: any) {
+    throw new Error(`Failed to get staking info: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Get Super Representatives list
+ */
+async function handleGetSuperRepresentatives() {
+  try {
+    const superReps = await tronService.getSuperRepresentatives();
+    
+    // Show top 5 SRs in dialog
+    const srList = superReps.slice(0, 5).map(sr => [
+      text(`**#${sr.ranking} ${sr.name}**`),
+      text(`Votes: ${(sr.totalVotes / 1000000).toFixed(2)}M`),
+      text(`Productivity: ${sr.productivity.toFixed(1)}%`),
+      divider(),
+    ]).flat();
+    
+    await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'alert',
+        content: panel([
+          heading('Top Super Representatives'),
+          text('Vote for SRs to earn rewards and support the network'),
+          divider(),
+          ...srList,
+          text('... and more'),
+        ]),
+      },
+    });
+    
+    return superReps;
+  } catch (error: any) {
+    throw new Error(`Failed to get Super Representatives: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Withdraw expired unfrozen balance
+ */
+async function handleWithdrawExpiredUnfrozen() {
+  try {
+    const result = await snap.request({
+      method: 'snap_dialog',
+      params: {
+        type: 'confirmation',
+        content: panel([
+          heading('Withdraw Unfrozen Balance'),
+          text('Withdraw any TRX that has completed the 14-day unstaking period.'),
+          divider(),
+          text('This will transfer all available unfrozen TRX back to your account.'),
+        ]),
+      },
+    });
+    
+    if (!result) {
+      throw new Error('Withdrawal cancelled by user');
+    }
+    
+    const txHash = await tronService.withdrawExpiredUnfrozen();
+    
+    await snap.request({
+      method: 'snap_notify',
+      params: {
+        type: 'inApp',
+        message: 'Successfully withdrew unfrozen balance',
+      },
+    });
+    
+    return { txHash };
+  } catch (error: any) {
+    throw new Error(`Withdrawal failed: ${error?.message || 'Unknown error'}`);
   }
 }
